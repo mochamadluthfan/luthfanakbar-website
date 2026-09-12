@@ -1,0 +1,133 @@
+<!--
+  RESEARCH NOTE TEMPLATE
+  =======================
+  How to publish a new Research Note:
+
+  1. Duplicate this file. GitHub's web UI has no one-click "duplicate," so in
+     practice: open this file, copy all its contents, click "Add file ->
+     Create new file," type a path like research/note-02-your-slug.html,
+     paste, then edit the text below.
+  2. Replace the placeholder text in every section. Delete any section that
+     doesn't apply to this note (not every note needs "Data & Sources," for
+     example).
+  3. Update the <title>, <meta name="description">, and the Overview/Key
+     Findings/etc. content.
+  4. Add one new card to the "Research Notes" section of research.html,
+     linking to this file, following the pattern already there.
+  5. Commit both files to GitHub. Done.
+
+  If a note includes an interactive chart or widget with its own custom
+  styling (like Research Note 01), keep that styling scoped to a single
+  wrapper class (e.g. a prefixed class name) so it can't collide with the
+  site's global CSS. See research/note-01-crv-range-tradeoff.html for an
+  example of this pattern.
+-->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>[Note Title] — Luthfan Akbar</title>
+<meta name="description" content="[One-sentence description of this research note.]">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="nav-wrap">
+    <a class="site-title" href="../index.html">Luthfan Akbar
+      <span class="subtitle-inline">Energy Economics &amp; the Energy Transition</span>
+    </a>
+    <nav class="main-nav">
+      <a href="../index.html">Home</a>
+      <a href="../research.html" class="active">Research</a>
+      <a href="../cv.html">CV &amp; Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <a class="back-link" href="../research.html">&larr; Back to Research</a>
+
+  <section>
+    <p class="eyebrow">Research Note</p>
+    <h1>[Note Title]</h1>
+    <p class="lede">[One-sentence subtitle or summary of what this note shows.]</p>
+    <p class="meta-line">Research Note 0X · [Month Year]</p>
+  </section>
+
+  <section>
+    <h2>Overview</h2>
+    <p>
+      [What question does this note answer, and why does it matter? Keep this
+      to one short paragraph — this is the orientation, not the analysis.]
+    </p>
+  </section>
+
+  <section>
+    <h2>Key Findings</h2>
+    <ul class="detail-list">
+      <li>[Finding one, stated as a specific, checkable claim.]</li>
+      <li>[Finding two.]</li>
+      <li>[Finding three.]</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Method &amp; Analysis</h2>
+    <p>
+      [How was this analysis done? Describe the model, the comparison being
+      made, and any key assumptions. If there's an interactive figure or
+      widget for this note, it can go here or in its own section below.]
+    </p>
+  </section>
+
+  <section>
+    <h2>Data &amp; Sources</h2>
+    <p>
+      [What data underlies this note, and where did it come from? Delete this
+      section if the note is purely conceptual or doesn't rely on external data.]
+    </p>
+  </section>
+
+  <section>
+    <h2>Limitations</h2>
+    <p>
+      [What should a reader be cautious about? Scope conditions, simplifying
+      assumptions, or places the result might not generalize.]
+    </p>
+  </section>
+
+  <section>
+    <h2>Downloads</h2>
+    <p class="note">[Link to a PDF, dataset, or code repository if available. Delete this section if there's nothing to download.]</p>
+  </section>
+
+  <section>
+    <h2>Citation &amp; Status</h2>
+    <p>Status: [e.g. "informal research note, not peer-reviewed."]</p>
+    <p class="note">
+      Suggested citation: Akbar, L. ([Year]). "[Note Title]." Research note.
+      <a href="https://orcid.org/0009-0005-0593-3939" target="_blank" rel="noopener">ORCID: 0009-0005-0593-3939</a>.
+    </p>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="footer-wrap">
+    <span>&copy; <span id="year"></span> Luthfan Akbar</span>
+    <span>
+      <a href="mailto:mochamadluthfan@gmail.com">mochamadluthfan@gmail.com</a> ·
+      <a href="https://orcid.org/0009-0005-0593-3939" target="_blank" rel="noopener">ORCID</a>
+    </span>
+  </div>
+</footer>
+
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
