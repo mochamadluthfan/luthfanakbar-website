@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How much range do you get for a liter of car? — Luthfan Akbar</title>
+<meta name="description" content="A fixed-volume packaging model, validated against the Honda CR-V family, comparing gasoline plug-in hybrid and hydrogen plug-in fuel cell range at every possible tank-to-battery split.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  /* ---------- scoped, portable base (Research Note 01 widget) ---------- */
+  .lra-root {
+    --ink: #171b21;
+    --ink-soft: #4b5563;
+    --ink-faint: #8b93a1;
+    --paper: #fbfaf8;
+    --line: #dfe1e6;
+    --line-soft: #ecedf0;
+    --gas: #a5762f;
+    --gas-soft: #f3e9da;
+    --h2: #2569a8;
+    --h2-soft: #dde9f4;
+    --batt: #3c7d5e;
+    --batt-soft: #e1ede7;
+    --mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  .lra-root * { box-sizing: border-box; }
+  .lra-wrap { max-width: 720px; margin: 0 auto; padding: 32px 24px 96px; }
+  .lra-wide { max-width: 920px; }
+
+  .lra-eyebrow { font-size: 13px; color: var(--ink-faint); margin: 0 0 14px; }
+  .lra-title {
+    font-family: var(--serif); font-weight: 500; font-size: clamp(30px, 4.4vw, 44px);
+    line-height: 1.14; letter-spacing: -0.01em; margin: 0 0 20px; color: var(--ink);
+  }
+  .lra-dek { font-size: 19px; color: var(--ink-soft); max-width: 62ch; margin: 0 0 8px; }
+  .lra-byline { font-size: 14px; color: var(--ink-faint); margin: 28px 0 0; }
+  .lra-byline a { color: var(--ink-soft); }
+
+  .lra-rule { border: 0; border-top: 1px solid var(--line); margin: 48px 0; }
+
+  .lra-root h2 {
+    font-family: var(--serif); font-weight: 500; font-size: 26px; line-height: 1.25;
+    margin: 0 0 16px; color: var(--ink);
+  }
+  .lra-root h3 {
+    font-size: 16px; font-weight: 600; margin: 28px 0 10px; color: var(--ink);
+  }
+  .lra-root p { font-size: 17px; color: #2a2f38; margin: 0 0 18px; max-width: 66ch; }
+  .lra-root p.lra-small { font-size: 14.5px; color: var(--ink-soft); }
+  .lra-root ul, .lra-root ol { font-size: 17px; color: #2a2f38; max-width: 66ch; padding-left: 22px; }
+  .lra-root li { margin-bottom: 8px; }
+  .lra-root strong { font-weight: 600; }
+  .lra-root a { color: var(--h2); text-decoration-color: rgba(37,105,168,0.35); }
+
+  .lra-callout {
+    border-left: 3px solid var(--ink); padding: 2px 0 2px 18px; margin: 24px 0;
+  }
+  .lra-callout p { margin: 0; font-size: 16.5px; }
+
+  /* ---------- the widget ---------- */
+  .lra-widget {
+    background: #ffffff; border: 1px solid var(--line); border-radius: 3px;
+    padding: 28px 28px 24px; margin: 40px 0 8px;
+  }
+  .lra-widget-head { font-size: 13px; color: var(--ink-faint); margin-bottom: 4px; }
+  .lra-widget-title { font-size: 18px; font-weight: 600; margin-bottom: 20px; }
+
+  .lra-legend { display: flex; flex-wrap: wrap; gap: 18px; font-size: 13.5px; color: var(--ink-soft); margin: 4px 0 18px; }
+  .lra-legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .lra-swatch { width: 16px; height: 3px; display: inline-block; border-radius: 2px; }
+
+  .lra-chart-box { position: relative; }
+  .lra-chart-box svg { width: 100%; height: auto; display: block; overflow: visible; }
+
+  .lra-slider-row { margin: 22px 0 6px; }
+  .lra-slider-label { display: flex; justify-content: space-between; font-size: 13.5px; color: var(--ink-soft); margin-bottom: 6px; }
+  .lra-slider-label b { color: var(--ink); font-family: var(--mono); font-weight: 600; font-size: 14px; }
+  input[type=range].lra-slider {
+    -webkit-appearance: none; appearance: none; width: 100%; height: 28px; background: transparent; cursor: pointer;
+  }
+  input[type=range].lra-slider::-webkit-slider-runnable-track { height: 3px; background: var(--line); border-radius: 2px; }
+  input[type=range].lra-slider::-moz-range-track { height: 3px; background: var(--line); border-radius: 2px; }
+  input[type=range].lra-slider::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 16px; height: 16px; margin-top: -6.5px; border-radius: 50%;
+    background: var(--ink); border: 2px solid #fff; box-shadow: 0 0 0 1px var(--line);
+  }
+  input[type=range].lra-slider::-moz-range-thumb {
+    width: 16px; height: 16px; border-radius: 50%; background: var(--ink); border: 2px solid #fff;
+  }
+  input[type=range].lra-slider:focus-visible { outline: 2px solid var(--h2); outline-offset: 4px; }
+
+  .lra-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1px; background: var(--line-soft); border: 1px solid var(--line-soft); margin-top: 20px; }
+  .lra-stat { background: #fff; padding: 12px 14px; }
+  .lra-stat-val { font-family: var(--mono); font-size: 19px; font-weight: 600; line-height: 1.1; }
+  .lra-stat-lab { font-size: 12px; color: var(--ink-faint); margin-top: 5px; line-height: 1.3; }
+
+  .lra-toggle { display: inline-flex; border: 1px solid var(--line); border-radius: 3px; overflow: hidden; margin-bottom: 4px; }
+  .lra-toggle button {
+    font-family: var(--sans); font-size: 12.5px; font-weight: 600; letter-spacing: 0.01em;
+    padding: 6px 14px; border: 0; background: #fff; color: var(--ink-soft); cursor: pointer;
+  }
+  .lra-toggle button[aria-pressed="true"] { background: var(--ink); color: #fff; }
+
+  .lra-caption { font-size: 13.5px; color: var(--ink-faint); margin: 10px 2px 0; max-width: 66ch; }
+
+  .lra-table { width: 100%; border-collapse: collapse; font-size: 15px; margin: 8px 0 20px; }
+  .lra-table th, .lra-table td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line-soft); }
+  .lra-table th { font-size: 12.5px; color: var(--ink-faint); font-weight: 600; text-transform: none; }
+  .lra-table td.num, .lra-table th.num { text-align: right; font-family: var(--mono); }
+
+  .lra-sources { font-size: 14.5px; color: var(--ink-soft); }
+  .lra-sources li { margin-bottom: 10px; }
+
+  @media (max-width: 640px) {
+    .lra-wrap { padding: 24px 18px 64px; }
+    .lra-widget { padding: 20px 16px 18px; }
+    .lra-stats { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="nav-wrap">
+    <a class="site-title" href="../index.html">Luthfan Akbar
+      <span class="subtitle-inline">Energy Economics &amp; Business Strategy</span>
+    </a>
+    <nav class="main-nav">
+      <a href="../index.html">Home</a>
+      <a href="../research.html" class="active">Research</a>
+      <a href="../cv.html">CV &amp; Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main style="max-width:none; padding:0;">
+
+<div class="lra-root">
+  <div class="lra-wrap">
+
+    <a class="back-link" href="../research.html">&larr; Back to Research</a>
+
+    <p class="lra-eyebrow">Research Note 01 · September 2026 · Energy transition · packaging &amp; range</p>
+    <h1 class="lra-title">How much range do you get for a liter of car?</h1>
+    <p class="lra-dek">A fixed volume budget, split between battery, gasoline, and hydrogen storage, validated against a real vehicle, the Honda CR-V family, the only nameplate sold as a gasoline SUV, a hybrid, and a plug-in hydrogen fuel cell SUV on one platform.</p>
+    <p class="lra-byline">Luthfan Akbar · <a href="https://luthfanakbar.com">luthfanakbar.com</a></p>
+
+    <hr class="lra-rule">
+
+    <p>Put a battery, a fuel tank, and a hydrogen tank in a straight fight over the same physical space in a car, and the outcome isn't close, but the reason why is more interesting than the result. This is a small model built to see exactly how much range a plug-in hybrid gives up, or gains, as you shift its storage volume between a battery pack and a tank, for both a gasoline range extender and a hydrogen fuel cell.</p>
+
+    <p class="lra-small">Updated September 16, 2026: several drivetrain-efficiency assumptions and the occupant-load figure were replaced with independently sourced values (see "How the model was built" and the sources below). The qualitative conclusion is unchanged; the exact kilometer figures moved as a result.</p>
+
+  </div>
+
+  <div class="lra-wrap lra-wide">
+    <div class="lra-widget">
+      <div class="lra-widget-head">Interactive — drag to change the split</div>
+      <div class="lra-widget-title">Total range vs. tank share of storage volume</div>
+
+      <div class="lra-legend">
+        <span><i class="lra-swatch" style="background:var(--gas)"></i>Gasoline plug-in hybrid</span>
+        <span><i class="lra-swatch" style="background:var(--h2)"></i>Hydrogen plug-in fuel cell</span>
+        <span><i class="lra-swatch" style="background:var(--batt);opacity:.7"></i>Battery only, no converter</span>
+      </div>
+
+      <div class="lra-toggle" role="group" aria-label="Chart scale">
+        <button id="lra-btn-full" aria-pressed="true">Full range</button>
+        <button id="lra-btn-zoom" aria-pressed="false">Zoom to 0–900 km</button>
+      </div>
+
+      <div class="lra-chart-box">
+        <svg id="lra-svg" viewBox="0 0 880 420" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Line chart of total range against tank share of storage volume">
+          <!-- populated by JS -->
+        </svg>
+      </div>
+
+      <div class="lra-slider-row">
+        <div class="lra-slider-label">
+          <span>Tank share of storage volume</span>
+          <b id="lra-pct-label">25%</b>
+        </div>
+        <input type="range" class="lra-slider" id="lra-slider" min="0" max="100" step="1" value="25" aria-label="Tank share of storage volume, percent">
+      </div>
+
+      <div class="lra-stats" id="lra-stats"><!-- populated by JS --></div>
+      <p class="lra-caption">Vehicle: fixed 440&nbsp;L installed-component budget, calibrated to the Honda CR-V platform. Range is total, electric-only plus extended, on one full charge and one full tank, over a synthetic mixed drive cycle. Mass is with an average occupant load aboard (1.75 persons, Jakarta average, at 60&nbsp;kg each).</p>
+    </div>
+  </div>
+
+  <div class="lra-wrap">
+
+    <h2>How to read it</h2>
+    <p>At 0% the entire budget goes to battery, effectively a BEV with a dead engine or fuel cell riding along unused. At 100% the entire budget goes to fuel storage, with no battery at all. Everywhere in between is a real plug-in hybrid: some electric-only range, then a fuel-fed extension once the battery is depleted.</p>
+    <p>The dashed green line is what you'd get if you deleted the converter (engine, or fuel cell) entirely and gave 100% of the <em>whole</em> volume budget to battery instead: the pure-BEV ceiling for this exact packaging envelope.</p>
+
+    <h2>What it shows</h2>
+    <p>Gasoline wins by a wide and widening margin almost everywhere. At a quarter of the storage volume in the tank, close to what real plug-in hybrids on sale today actually use, the gasoline version already covers 959&nbsp;km total, nearly triple the pure-battery ceiling. Push the split further toward fuel and the curve just keeps climbing, because gasoline's volumetric energy density so far exceeds what a car actually needs that there's essentially no natural ceiling within a realistic tank size.</p>
+    <p>Hydrogen never gets there. Even with the <em>entire</em> 440&nbsp;L budget devoted to a 700&nbsp;bar tank and no battery at all, the model tops out at 549&nbsp;km, comfortably above, but not dramatically above, what a well-executed pure-battery version of the same car already achieves with no fuel system at all. The reason isn't fuel-cell efficiency, which is actually good: a hydrogen fuel cell converts stored energy to motion more efficiently than a small gasoline engine does. The reason is storage. Compressed hydrogen, tank included, stores about 0.64&nbsp;kWh per liter at today's technology; a gasoline tank stores about 7.2&nbsp;kWh per liter. That roughly eleven-to-one gap in volumetric density is not something a ~1.4&times; efficiency advantage can make up for.</p>
+    <p>There's one narrow region worth naming: below about 3% tank share, hydrogen briefly out-ranges gasoline, because a fuel-cell stack physically packages smaller than an engine, generator, and exhaust system, leaving slightly more room for battery. It's a real effect, and it's also the only place hydrogen wins.</p>
+
+    <table class="lra-table">
+      <tr><th>Configuration</th><th class="num">Battery</th><th class="num">Fuel</th><th class="num">Electric range</th><th class="num">Total range</th></tr>
+      <tr><td>Gasoline PHEV, 25% tank share</td><td class="num">33 kWh</td><td class="num">50 L</td><td class="num">139 km</td><td class="num">959 km</td></tr>
+      <tr><td>Hydrogen PHEV, 100% tank share</td><td class="num">0 kWh</td><td class="num">6.1 kg</td><td class="num">0 km</td><td class="num">549 km</td></tr>
+      <tr><td>Battery only, full budget</td><td class="num">80 kWh</td><td class="num">—</td><td class="num">334 km</td><td class="num">334 km</td></tr>
+    </table>
+
+    <h2>The Honda CR-V, by the numbers</h2>
+    <p>The model above is built around the Honda CR-V's actual dimensions, not a generic "compact SUV" stand-in. Here's the full comparison across the three powertrains it's sold with.</p>
+
+    <table class="lra-table">
+      <tr><th>Spec</th><th>CR-V 1.5T (gas)</th><th>CR-V Hybrid</th><th>CR-V e:FCEV</th></tr>
+      <tr><td>Length</td><td>4,694 mm (184.8 in)</td><td>4,694 mm (184.8 in)</td><td>4,765 mm (187.6 in)</td></tr>
+      <tr><td>Width (excl. mirrors)</td><td>1,867 mm (73.5 in)</td><td>1,867 mm (73.5 in)</td><td>1,867 mm (73.5 in)</td></tr>
+      <tr><td>Height</td><td>1,682 mm (66.2 in)</td><td>1,682–1,689 mm (66.2–66.5 in, 2WD/AWD)</td><td>1,692 mm (66.6 in)</td></tr>
+      <tr><td>Wheelbase</td><td>2,700 mm (106.3 in)</td><td>2,700 mm (106.3 in)</td><td>2,700 mm (106.3 in)</td></tr>
+      <tr><td>Ground clearance</td><td>198 mm (7.8 in)</td><td>198–208 mm (7.8–8.2 in, 2WD/AWD)</td><td>not published</td></tr>
+      <tr><td>Curb weight</td><td>1,586 kg (3,497 lb)</td><td>1,702–1,781 kg (3,752–3,926 lb, by trim)</td><td>2,023 kg (4,460 lb)</td></tr>
+      <tr><td>Payload<sup>†</sup></td><td>~386 kg (850 lb)</td><td>not published</td><td>not published</td></tr>
+      <tr><td>Seating</td><td>5</td><td>5</td><td>5</td></tr>
+      <tr><td>Cargo, seats up<sup>‡</sup></td><td>1,028–1,113 L (36.3–39.3 cu ft)</td><td>983–1,113 L (34.7–39.3 cu ft)</td><td>714 L (25.2 cu ft)</td></tr>
+      <tr><td>Cargo, seats folded</td><td>2,166 L (76.5 cu ft)</td><td>2,166 L (76.5 cu ft)</td><td>1,727 L (61.0 cu ft)</td></tr>
+      <tr><td>Fuel / H2 tank</td><td>53.0 L gasoline</td><td>53.0 L gasoline</td><td>4.3 kg hydrogen</td></tr>
+      <tr><td>Horsepower</td><td>190 hp</td><td>204 hp combined</td><td>174 hp</td></tr>
+      <tr><td>Towing capacity</td><td>680 kg (1,500 lb)</td><td>454 kg (1,000 lb)</td><td>not rated</td></tr>
+    </table>
+
+    <p class="lra-small"><sup>†</sup> Honda does not publish GVWR or payload for the CR-V, common across this vehicle class since the figure depends on installed options and only appears on each individual car's door-jamb sticker. The one number here is a third-party aggregator estimate for a single gas trim, not a Honda-published figure; treat it as indicative rather than citable, and check your own door-jamb sticker for your car's actual number.</p>
+    <p class="lra-small"><sup>‡</sup> Two sources disagree on gas and hybrid cargo volume: Honda's own press kit gives 1,028 L / 36.3 cu ft (gas) and 983 L / 34.7 cu ft (hybrid); a separate spec aggregator gives 1,113 L / 39.3 cu ft for both. This is most likely a trim or measurement-standard difference rather than an error in either source, but it hasn't been resolved to a single canonical figure yet.</p>
+
+    <div class="lra-callout">
+      <p>How this compares to your own car: the packaging tradeoffs shown above apply directly if your car sits within roughly &plusmn;10% of the CR-V's dimensions, 4.7 m long, a 2.7 m wheelbase, 1,586 to 2,023 kg at the curb depending on powertrain. In a meaningfully smaller or larger car the shape of the curve holds, but the kilometer figures shift: a smaller volume budget compresses every number on the chart, a larger one stretches them.</p>
+    </div>
+
+    <h2>How the model was built</h2>
+    <p>This isn't a spec-sheet comparison of unrelated cars. It's one fixed packaging envelope, swept continuously from all-battery to all-fuel, so the only thing that changes between any two points on the curve is the split itself.</p>
+    <ul>
+      <li><strong>Road load and consumption</strong> come from a synthetic drive cycle (45% urban, 25% suburban, 30% highway by distance, mean speed 48&nbsp;km/h) run through a standard road-load equation: rolling resistance, aerodynamic drag, and inertia, with regenerative braking and a fixed auxiliary load.</li>
+      <li><strong>Fuel mass is integrated along the route</strong>, not held constant: as the tank empties, the car gets lighter and consumption per kilometer drops accordingly, exactly as it does in reality.</li>
+      <li><strong>Hardware is calibrated to the real Honda CR-V family</strong>: glider mass from the 2026 CR-V's published curb weight, engine mass from the actual L15B7 1.5T dressed weight, hydrogen storage density from the U.S. Department of Energy's own onboard-storage program record, and battery density from published LFP pack figures.</li>
+      <li><strong>Validated, not just calibrated</strong>: reproducing the real production Honda&nbsp;CR-V&nbsp;e:FCEV inside this exact model, at the volume split that car actually uses, lands within 4% of its real EPA-rated range, on a model tuned to none of its numbers except fuel-cell efficiency.</li>
+    </ul>
+
+    <div class="lra-callout">
+      <p>The honest caveat: this is a compact-SUV-sized packaging envelope with a synthetic drive cycle, not a regulatory test. Treat the curve's shape and the qualitative conclusion, that gasoline's volumetric advantage over hydrogen is large and structural and not a matter of fuel-cell efficiency, as the finding, and the exact kilometer figures as good-to-a-few-percent estimates.</p>
+    </div>
+
+    <h2>Sources</h2>
+    <ul class="lra-sources">
+      <li>Honda CR-V (2026) curb weight and fuel economy — <a href="https://www.kbb.com/honda/cr-v/2026/ex" target="_blank" rel="noopener">Kelley Blue Book</a>; EPA ratings via <a href="https://www.fueleconomy.gov/feg/bymodel/2026_Honda_CR-V.shtml" target="_blank" rel="noopener">fueleconomy.gov</a></li>
+      <li>Honda CR-V e:FCEV curb weight and EPA electric range — <a href="https://www.kbb.com/honda/cr-v-efcev/2026/base-style/" target="_blank" rel="noopener">Kelley Blue Book</a></li>
+      <li>Hydrogen onboard storage system status (0.86 kWh/L, 1.71 kWh/kg, system level) — U.S. DOE Hydrogen Program Record 24006</li>
+      <li>LFP battery pack density — BYD Blade and CATL cell-to-pack published figures</li>
+      <li>Engine thermal efficiency (40% BTE) — Honda and Toyota manufacturer claims for current hybrid-dedicated engines (Honda 1.5L Atkinson &gt;40%; Toyota Dynamic Force 40&ndash;41%)</li>
+      <li>Traction chain efficiency (88.6%), WLTC cycle-averaged combined motoring/regen "machine efficiency," single-speed EV (<a href="https://arxiv.org/pdf/2006.04705" target="_blank" rel="noopener">arxiv.org/pdf/2006.04705</a>)</li>
+      <li>Fuel cell system efficiency cross-check, real Toyota Mirai dynamometer testing, DOE/Argonne National Laboratory</li>
+      <li>Occupant load (1.75 persons at 60&nbsp;kg): Jakarta private-car occupancy trend (Hanna, MIT working paper); average Indonesian adult body weight (Muljati et al. 2016)</li>
+      <li>Full-vehicle specifications — Honda's 2026 CR-V Specifications &amp; Features press release; Kelley Blue Book's 2026 CR-V EX, CR-V Hybrid TrailSport, and CR-V e:FCEV spec pages; <a href="https://www.thecarconnection.com" target="_blank" rel="noopener">TheCarConnection.com</a>'s 2026 CR-V spec aggregation; <a href="https://www.towingspecs.com" target="_blank" rel="noopener">TowingSpecs.com</a>, which documents the GVWR/payload gap in Honda's own materials</li>
+    </ul>
+
+    <hr class="lra-rule">
+    <p class="lra-small">Model and analysis by Luthfan Akbar. Built as part of ongoing research into powertrain packaging and decarbonization pathways for private vehicles.</p>
+  </div>
+</div>
+
+</main>
+
+<footer class="site-footer">
+  <div class="footer-wrap">
+    <span>&copy; <span id="year"></span> Luthfan Akbar</span>
+    <span>
+      <a href="mailto:mochamadluthfan@gmail.com">mochamadluthfan@gmail.com</a> ·
+      <a href="https://orcid.org/0009-0005-0593-3939" target="_blank" rel="noopener">ORCID</a>
+    </span>
+  </div>
+</footer>
+
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+<script>
+(function() {
+  var ICE = [[0.0,183.95,183.95,2177.0,43.68,0.0],[1.0,214.6,182.16,2175.8,43.243,2.0],[2.0,245.28,180.37,2174.7,42.806,4.0],[3.0,275.98,178.58,2173.5,42.37,6.0],[4.0,306.71,176.79,2172.3,41.933,8.0],[5.0,337.48,175.0,2171.2,41.496,10.0],[6.0,368.27,173.2,2170.0,41.059,12.0],[7.0,399.08,171.41,2168.8,40.622,14.0],[8.0,429.93,169.61,2167.6,40.186,16.0],[9.0,460.8,167.81,2166.5,39.749,18.0],[10.0,491.71,166.01,2165.3,39.312,20.0],[11.0,522.64,164.21,2164.1,38.875,22.0],[12.0,553.6,162.41,2163.0,38.438,24.0],[13.0,584.59,160.61,2161.8,38.002,26.0],[14.0,615.6,158.81,2160.6,37.565,28.0],[15.0,646.65,157.01,2159.4,37.128,30.0],[16.0,677.72,155.2,2158.3,36.691,32.0],[17.0,708.83,153.4,2157.1,36.254,34.0],[18.0,739.96,151.59,2155.9,35.818,36.0],[19.0,771.12,149.78,2154.8,35.381,38.0],[20.0,802.31,147.97,2153.6,34.944,40.0],[21.0,833.53,146.16,2152.4,34.507,42.0],[22.0,864.78,144.35,2151.3,34.07,44.0],[23.0,896.06,142.54,2150.1,33.634,46.0],[24.0,927.36,140.73,2148.9,33.197,48.0],[25.0,958.7,138.92,2147.8,32.76,50.0],[26.0,990.06,137.1,2146.6,32.323,52.0],[27.0,1021.45,135.29,2145.4,31.886,54.0],[28.0,1052.88,133.47,2144.2,31.45,56.0],[29.0,1084.33,131.65,2143.1,31.013,58.0],[30.0,1115.81,129.84,2141.9,30.576,60.0],[31.0,1147.32,128.02,2140.7,30.139,62.0],[32.0,1178.86,126.2,2139.6,29.702,64.0],[33.0,1210.43,124.37,2138.4,29.266,66.0],[34.0,1242.03,122.55,2137.2,28.829,68.0],[35.0,1273.66,120.73,2136.0,28.392,70.0],[36.0,1305.32,118.9,2134.9,27.955,72.0],[37.0,1337.0,117.08,2133.7,27.518,74.0],[38.0,1368.72,115.25,2132.5,27.082,76.0],[39.0,1400.47,113.42,2131.4,26.645,78.0],[40.0,1432.24,111.6,2130.2,26.208,80.0],[41.0,1464.05,109.77,2129.0,25.771,82.0],[42.0,1495.89,107.94,2127.9,25.334,84.0],[43.0,1527.75,106.1,2126.7,24.898,86.0],[44.0,1559.65,104.27,2125.5,24.461,88.0],[45.0,1591.58,102.44,2124.4,24.024,90.0],[46.0,1623.53,100.6,2123.2,23.587,92.0],[47.0,1655.52,98.77,2122.0,23.15,94.0],[48.0,1687.54,96.93,2120.8,22.714,96.0],[49.0,1719.58,95.09,2119.7,22.277,98.0],[50.0,1751.66,93.25,2118.5,21.84,100.0],[51.0,1783.77,91.42,2117.3,21.403,102.0],[52.0,1815.9,89.57,2116.2,20.966,104.0],[53.0,1848.07,87.73,2115.0,20.53,106.0],[54.0,1880.27,85.89,2113.8,20.093,108.0],[55.0,1912.5,84.05,2112.6,19.656,110.0],[56.0,1944.76,82.2,2111.5,19.219,112.0],[57.0,1977.05,80.36,2110.3,18.782,114.0],[58.0,2009.37,78.51,2109.1,18.346,116.0],[59.0,2041.72,76.66,2108.0,17.909,118.0],[60.0,2074.1,74.81,2106.8,17.472,120.0],[61.0,2106.51,72.96,2105.6,17.035,122.0],[62.0,2138.95,71.11,2104.5,16.598,124.0],[63.0,2171.42,69.26,2103.3,16.162,126.0],[64.0,2203.93,67.41,2102.1,15.725,128.0],[65.0,2236.46,65.55,2101.0,15.288,130.0],[66.0,2269.03,63.7,2099.8,14.851,132.0],[67.0,2301.63,61.84,2098.6,14.414,134.0],[68.0,2334.25,59.98,2097.4,13.978,136.0],[69.0,2366.91,58.12,2096.3,13.541,138.0],[70.0,2399.6,56.27,2095.1,13.104,140.0],[71.0,2432.32,54.41,2093.9,12.667,142.0],[72.0,2465.08,52.54,2092.8,12.23,144.0],[73.0,2497.86,50.68,2091.6,11.794,146.0],[74.0,2530.68,48.82,2090.4,11.357,148.0],[75.0,2563.52,46.95,2089.2,10.92,150.0],[76.0,2596.4,45.09,2088.1,10.483,152.0],[77.0,2629.31,43.22,2086.9,10.046,154.0],[78.0,2662.25,41.35,2085.7,9.61,156.0],[79.0,2695.22,39.49,2084.6,9.173,158.0],[80.0,2728.22,37.62,2083.4,8.736,160.0],[81.0,2761.26,35.74,2082.2,8.299,162.0],[82.0,2794.33,33.87,2081.1,7.862,164.0],[83.0,2827.42,32.0,2079.9,7.426,166.0],[84.0,2860.56,30.13,2078.7,6.989,168.0],[85.0,2893.72,28.25,2077.6,6.552,170.0],[86.0,2926.91,26.38,2076.4,6.115,172.0],[87.0,2960.14,24.5,2075.2,5.678,174.0],[88.0,2993.4,22.62,2074.0,5.242,176.0],[89.0,3026.69,20.74,2072.9,4.805,178.0],[90.0,3060.01,18.86,2071.7,4.368,180.0],[91.0,3093.36,16.98,2070.5,3.931,182.0],[92.0,3126.75,15.1,2069.4,3.494,184.0],[93.0,3160.17,13.21,2068.2,3.058,186.0],[94.0,3193.62,11.33,2067.0,2.621,188.0],[95.0,3227.1,9.44,2065.8,2.184,190.0],[96.0,3260.61,7.56,2064.7,1.747,192.0],[97.0,3294.16,5.67,2063.5,1.31,194.0],[98.0,3327.74,3.78,2062.3,0.874,196.0],[99.0,3361.35,1.89,2061.2,0.437,198.0],[100.0,3395.0,0.0,2060.0,0.0,200.0]];
+  var FC  = [[0.0,243.84,243.84,2202.0,58.24,0.0],[1.0,240.12,235.0,2319.0,57.658,0.061],[2.0,243.03,232.78,2316.1,57.075,0.122],[3.0,245.94,230.56,2313.1,56.493,0.183],[4.0,248.86,228.34,2310.1,55.91,0.245],[5.0,251.78,226.11,2307.2,55.328,0.306],[6.0,254.71,223.88,2304.2,54.746,0.367],[7.0,257.64,221.65,2301.2,54.163,0.428],[8.0,260.57,219.42,2298.3,53.581,0.489],[9.0,263.51,217.18,2295.3,52.998,0.55],[10.0,266.45,214.94,2292.3,52.416,0.612],[11.0,269.4,212.69,2289.4,51.834,0.673],[12.0,272.35,210.45,2286.4,51.251,0.734],[13.0,275.3,208.2,2283.4,50.669,0.795],[14.0,278.26,205.94,2280.4,50.086,0.856],[15.0,281.23,203.69,2277.5,49.504,0.917],[16.0,284.19,201.43,2274.5,48.922,0.978],[17.0,287.16,199.16,2271.5,48.339,1.04],[18.0,290.14,196.9,2268.6,47.757,1.101],[19.0,293.12,194.63,2265.6,47.174,1.162],[20.0,296.1,192.36,2262.6,46.592,1.223],[21.0,299.09,190.08,2259.7,46.01,1.284],[22.0,302.08,187.8,2256.7,45.427,1.345],[23.0,305.07,185.52,2253.7,44.845,1.406],[24.0,308.07,183.24,2250.8,44.262,1.468],[25.0,311.08,180.95,2247.8,43.68,1.529],[26.0,314.09,178.66,2244.8,43.098,1.59],[27.0,317.1,176.37,2241.9,42.515,1.651],[28.0,320.11,174.07,2238.9,41.933,1.712],[29.0,323.14,171.77,2235.9,41.35,1.773],[30.0,326.16,169.47,2233.0,40.768,1.835],[31.0,329.19,167.16,2230.0,40.186,1.896],[32.0,332.22,164.85,2227.0,39.603,1.957],[33.0,335.26,162.54,2224.1,39.021,2.018],[34.0,338.3,160.22,2221.1,38.438,2.079],[35.0,341.35,157.91,2218.1,37.856,2.14],[36.0,344.4,155.58,2215.2,37.274,2.201],[37.0,347.45,153.26,2212.2,36.691,2.263],[38.0,350.51,150.93,2209.2,36.109,2.324],[39.0,353.58,148.6,2206.2,35.526,2.385],[40.0,356.64,146.26,2203.3,34.944,2.446],[41.0,359.72,143.92,2200.3,34.362,2.507],[42.0,362.79,141.58,2197.3,33.779,2.568],[43.0,365.87,139.24,2194.4,33.197,2.63],[44.0,368.96,136.89,2191.4,32.614,2.691],[45.0,372.05,134.54,2188.4,32.032,2.752],[46.0,375.14,132.18,2185.5,31.45,2.813],[47.0,378.24,129.83,2182.5,30.867,2.874],[48.0,381.34,127.47,2179.5,30.285,2.935],[49.0,384.45,125.1,2176.6,29.702,2.996],[50.0,387.56,122.73,2173.6,29.12,3.058],[51.0,390.68,120.36,2170.6,28.538,3.119],[52.0,393.8,117.99,2167.7,27.955,3.18],[53.0,396.92,115.61,2164.7,27.373,3.241],[54.0,400.05,113.23,2161.7,26.79,3.302],[55.0,403.18,110.85,2158.8,26.208,3.363],[56.0,406.32,108.46,2155.8,25.626,3.425],[57.0,409.46,106.07,2152.8,25.043,3.486],[58.0,412.61,103.67,2149.9,24.461,3.547],[59.0,415.76,101.28,2146.9,23.878,3.608],[60.0,418.92,98.87,2143.9,23.296,3.669],[61.0,422.08,96.47,2141.0,22.714,3.73],[62.0,425.24,94.06,2138.0,22.131,3.791],[63.0,428.41,91.65,2135.0,21.549,3.853],[64.0,431.59,89.24,2132.1,20.966,3.914],[65.0,434.77,86.82,2129.1,20.384,3.975],[66.0,437.95,84.4,2126.1,19.802,4.036],[67.0,441.14,81.97,2123.1,19.219,4.097],[68.0,444.33,79.55,2120.2,18.637,4.158],[69.0,447.53,77.11,2117.2,18.054,4.219],[70.0,450.73,74.68,2114.2,17.472,4.281],[71.0,453.93,72.24,2111.3,16.89,4.342],[72.0,457.15,69.8,2108.3,16.307,4.403],[73.0,460.36,67.35,2105.3,15.725,4.464],[74.0,463.58,64.91,2102.4,15.142,4.525],[75.0,466.8,62.45,2099.4,14.56,4.586],[76.0,470.03,60.0,2096.4,13.978,4.648],[77.0,473.27,57.54,2093.5,13.395,4.709],[78.0,476.51,55.08,2090.5,12.813,4.77],[79.0,479.75,52.61,2087.5,12.23,4.831],[80.0,483.0,50.14,2084.6,11.648,4.892],[81.0,486.25,47.67,2081.6,11.066,4.953],[82.0,489.51,45.19,2078.6,10.483,5.014],[83.0,492.77,42.71,2075.7,9.901,5.076],[84.0,496.04,40.23,2072.7,9.318,5.137],[85.0,499.31,37.74,2069.7,8.736,5.198],[86.0,502.59,35.25,2066.8,8.154,5.259],[87.0,505.87,32.75,2063.8,7.571,5.32],[88.0,509.15,30.26,2060.8,6.989,5.381],[89.0,512.44,27.75,2057.9,6.406,5.443],[90.0,515.74,25.25,2054.9,5.824,5.504],[91.0,519.04,22.74,2051.9,5.242,5.565],[92.0,522.34,20.23,2048.9,4.659,5.626],[93.0,525.65,17.71,2046.0,4.077,5.687],[94.0,528.97,15.19,2043.0,3.494,5.748],[95.0,532.29,12.67,2040.0,2.912,5.809],[96.0,535.61,10.14,2037.1,2.33,5.871],[97.0,538.94,7.61,2034.1,1.747,5.932],[98.0,542.28,5.08,2031.1,1.165,5.993],[99.0,545.62,2.54,2028.2,0.582,6.054],[100.0,548.96,0.0,2025.2,0.0,6.115]];
+  var BEV = {"kwh":80.1,"mass":2213.0,"range":334.4};
+  // columns: [tank_share_pct, total_km, ev_km, mass_full_kg, batt_kwh, fuel]
+
+  var svg = document.getElementById('lra-svg');
+  var NS = "http://www.w3.org/2000/svg";
+  var PAD = { l: 54, r: 18, t: 16, b: 40 };
+  var VW = 880, VH = 420;
+  var plotW = VW - PAD.l - PAD.r, plotH = VH - PAD.t - PAD.b;
+
+  var state = { zoom: false };
+
+  function yMax() { return state.zoom ? 900 : 3000; }
+  function xPix(pct) { return PAD.l + (pct/100) * plotW; }
+  function yPix(km) { return PAD.t + plotH - (Math.min(km, yMax())/yMax()) * plotH; }
+
+  function pathFor(rows, idx) {
+    var d = "";
+    for (var i = 0; i < rows.length; i++) {
+      var x = xPix(rows[i][0]), y = yPix(rows[i][idx]);
+      d += (i === 0 ? "M" : "L") + x.toFixed(1) + "," + y.toFixed(1) + " ";
+    }
+    return d;
+  }
+
+  function el(tag, attrs) {
+    var e = document.createElementNS(NS, tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    return e;
+  }
+
+  function render() {
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+
+    // gridlines + y ticks
+    var ticks = state.zoom ? [0,200,400,600,800] : [0,1000,2000,3000];
+    ticks.forEach(function(t) {
+      var y = yPix(t);
+      svg.appendChild(el("line", { x1: PAD.l, x2: VW-PAD.r, y1: y, y2: y, stroke: "#ecedf0", "stroke-width": 1 }));
+      var lab = el("text", { x: PAD.l-10, y: y+4, "text-anchor": "end", "font-size": 12, fill: "#8b93a1", "font-family": "ui-monospace,Menlo,monospace" });
+      lab.textContent = t;
+      svg.appendChild(lab);
+    });
+    // x ticks
+    [0,20,40,60,80,100].forEach(function(t) {
+      var x = xPix(t);
+      var lab = el("text", { x: x, y: VH-PAD.b+22, "text-anchor": "middle", "font-size": 12, fill: "#8b93a1", "font-family": "ui-monospace,Menlo,monospace" });
+      lab.textContent = t + "%";
+      svg.appendChild(lab);
+      svg.appendChild(el("line", { x1:x, x2:x, y1:VH-PAD.b, y2:VH-PAD.b+5, stroke:"#dfe1e6" }));
+    });
+    var xAxisLab = el("text", { x: PAD.l + plotW/2, y: VH-2, "text-anchor":"middle", "font-size":12.5, fill:"#4b5563" });
+    xAxisLab.textContent = "tank share of storage volume";
+    svg.appendChild(xAxisLab);
+
+    // axis baseline
+    svg.appendChild(el("line", { x1: PAD.l, x2: PAD.l, y1: PAD.t, y2: VH-PAD.b, stroke: "#dfe1e6" }));
+    svg.appendChild(el("line", { x1: PAD.l, x2: VW-PAD.r, y1: VH-PAD.b, y2: VH-PAD.b, stroke: "#dfe1e6" }));
+
+    // BEV reference dashed line
+    var by = yPix(BEV.range);
+    if (BEV.range <= yMax()) {
+      var bevLine = el("line", { x1: PAD.l, x2: VW-PAD.r, y1: by, y2: by, stroke: "#3c7d5e", "stroke-width": 1.6, "stroke-dasharray": "6 5", opacity: 0.85 });
+      svg.appendChild(bevLine);
+    }
+
+    // main curves
+    svg.appendChild(el("path", { d: pathFor(ICE, 1), fill: "none", stroke: "#a5762f", "stroke-width": 3 }));
+    svg.appendChild(el("path", { d: pathFor(FC, 1), fill: "none", stroke: "#2569a8", "stroke-width": 3 }));
+    // electric-only dotted
+    svg.appendChild(el("path", { d: pathFor(ICE, 2), fill: "none", stroke: "#a5762f", "stroke-width": 1.3, "stroke-dasharray": "1 4", opacity: 0.8 }));
+    svg.appendChild(el("path", { d: pathFor(FC, 2), fill: "none", stroke: "#2569a8", "stroke-width": 1.3, "stroke-dasharray": "1 4", opacity: 0.8 }));
+
+    updateMarker();
+  }
+
+  var markerGroup = null;
+  function updateMarker() {
+    var pct = parseInt(document.getElementById('lra-slider').value, 10);
+    if (markerGroup && markerGroup.parentNode === svg) svg.removeChild(markerGroup);
+    markerGroup = el("g", {});
+    var x = xPix(pct);
+    markerGroup.appendChild(el("line", { x1:x, x2:x, y1:PAD.t, y2:VH-PAD.b, stroke:"#171b21", "stroke-width":1, "stroke-dasharray":"2 3", opacity:0.55 }));
+
+    var iceRow = ICE[pct], fcRow = FC[pct];
+    [ [iceRow, "#a5762f"], [fcRow, "#2569a8"] ].forEach(function(pair) {
+      var row = pair[0], color = pair[1];
+      var yv = Math.min(row[1], yMax());
+      var cy = yPix(yv);
+      markerGroup.appendChild(el("circle", { cx:x, cy:cy, r:5, fill:color, stroke:"#fff", "stroke-width":2 }));
+    });
+    svg.appendChild(markerGroup);
+
+    // update text panels
+    document.getElementById('lra-pct-label').textContent = pct + "%";
+    var stats = document.getElementById('lra-stats');
+    var fmt = function(n) { return Math.round(n).toLocaleString('en-US'); };
+    stats.innerHTML =
+      stat(fmt(iceRow[1]) + " km", "Gasoline PHEV total range", "#a5762f") +
+      stat(fmt(fcRow[1]) + " km", "Hydrogen PHEV total range", "#2569a8") +
+      stat(fmt(iceRow[2]) + " km", "Electric-only, gasoline build") +
+      stat(fmt(fcRow[2]) + " km", "Electric-only, hydrogen build") +
+      stat(fmt(iceRow[3]) + " kg", "Vehicle mass, gasoline build") +
+      stat(fmt(fcRow[3]) + " kg", "Vehicle mass, hydrogen build");
+  }
+  function stat(val, lab, color) {
+    return '<div class="lra-stat"><div class="lra-stat-val"' + (color ? ' style="color:'+color+'"' : '') + '>' + val + '</div><div class="lra-stat-lab">' + lab + '</div></div>';
+  }
+
+  document.getElementById('lra-slider').addEventListener('input', updateMarker);
+  document.getElementById('lra-btn-full').addEventListener('click', function() {
+    state.zoom = false;
+    this.setAttribute('aria-pressed','true');
+    document.getElementById('lra-btn-zoom').setAttribute('aria-pressed','false');
+    render();
+  });
+  document.getElementById('lra-btn-zoom').addEventListener('click', function() {
+    state.zoom = true;
+    this.setAttribute('aria-pressed','true');
+    document.getElementById('lra-btn-full').setAttribute('aria-pressed','false');
+    render();
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
